@@ -1,4 +1,4 @@
-package com.SmartMart.backend.Domain.entity;
+package com.SmartMart.backend.Domain.Entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +22,19 @@ public class Order {
     private String status; // order status
     private String orderDate;
 
+    public void setOrderDate(String orderDate) {
+        this.orderDate=orderDate;
+    }
 
+    public List<OrderItem>getItems(){
+        return items;
+    }
 
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount=totalAmount;
+    }
 
+    public void setStatus(String status) {
+        this.status=status;
+    }
 }

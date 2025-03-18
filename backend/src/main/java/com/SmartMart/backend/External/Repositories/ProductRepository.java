@@ -1,6 +1,6 @@
 package com.SmartMart.backend.External.Repositories;
 
-import com.SmartMart.backend.Domain.entity.Product;
+import com.SmartMart.backend.Domain.Entity.Product;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
