@@ -1,4 +1,4 @@
-package com.SmartMart.backend.Supplier.controller;
+package com.SmartMart.backend.Supplier;
 
 
 import com.mongodb.client.MongoClient;
@@ -12,12 +12,12 @@ public class MongoConfig {
 
     @Bean
     public MongoClient mongoClient() {
-        return MongoClients.create("mongodb+srv://<username>:123@cluster.mongodb.net/<database_name>?retryWrites=true&w=majority");
+        return MongoClients.create("mongodb+srv://hirunyadimanthi:123@cluster0.e6zqq.mongodb.net/smartmart");
 
     }
 
     @Bean
     public MongoTemplate mongoTemplate() {
-        return new MongoTemplate(mongoClient(), "<database_name>");
+        return new MongoTemplate(mongoClient(), "<cluster0.e6zqq.mongodb.net/smartmart>");
     }
 }
