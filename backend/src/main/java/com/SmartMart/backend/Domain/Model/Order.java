@@ -1,4 +1,4 @@
-package com.SmartMart.backend.Domain.Entity;
+package com.SmartMart.backend.Domain.Model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

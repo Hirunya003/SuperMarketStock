@@ -1,6 +1,6 @@
-package com.SmartMart.backend.Application;
+package com.SmartMart.backend.Application.Controllers;
 
-import com.SmartMart.backend.Domain.Entity.Order;
+import com.SmartMart.backend.Domain.Model.Order;
 import com.SmartMart.backend.Domain.Service.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +22,7 @@ public class OrderController {
         return orderService.getOrdersByCustomer(customerId);
         }
 
-        @PutMapping("/{orderId}/status")
+        @PutMapping("/{oId}/status")
         public Order updateOrderStatus(@PathVariable String oId, @RequestParam String status){
         return orderService.updateOrderStatus(oId,status);
     }
