@@ -20,4 +20,5 @@ public class MongoConfig {
     public MongoTemplate mongoTemplate() {
         return new MongoTemplate(mongoClient(), "<cluster0.e6zqq.mongodb.net/smartmart>");
     }
+
 }
