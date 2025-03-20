@@ -1,8 +1,8 @@
-package com.SmartMart.backend.Domain.Service;
+package com.SmartMart.backend.CustomerOrder.service;
 
-import com.SmartMart.backend.Domain.Model.Order;
-import com.SmartMart.backend.Domain.Model.OrderItem;
-import com.SmartMart.backend.Domain.Model.Product;
+import com.SmartMart.backend.CustomerOrder.Model.Order;
+import com.SmartMart.backend.CustomerOrder.Model.OrderItem;
+import com.SmartMart.backend.CustomerOrder.Model.Product;
 import com.SmartMart.backend.External.Repositories.OrderRepository;
 import com.SmartMart.backend.External.Repositories.ProductRepository;
 import lombok.AllArgsConstructor;

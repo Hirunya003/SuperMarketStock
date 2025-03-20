@@ -1,6 +1,6 @@
 //package com.SmartMart.backend.External.Repositories;
 //
-//import com.SmartMart.backend.Domain.Model.Product;
+//import com.SmartMart.backend.CustomerOrder.Model.Product;
 //import org.springframework.data.mongodb.repository.MongoRepository;
 //import org.springframework.stereotype.Repository;
 //
@@ -11,7 +11,7 @@
 //
 package com.SmartMart.backend.External.Repositories;
 
-import com.SmartMart.backend.Domain.Model.Product;
+import com.SmartMart.backend.CustomerOrder.Model.Product;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

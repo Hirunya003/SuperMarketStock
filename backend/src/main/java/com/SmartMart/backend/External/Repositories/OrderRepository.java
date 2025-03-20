@@ -1,6 +1,6 @@
 package com.SmartMart.backend.External.Repositories;
 
-import com.SmartMart.backend.Domain.Model.Order;
+import com.SmartMart.backend.CustomerOrder.Model.Order;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

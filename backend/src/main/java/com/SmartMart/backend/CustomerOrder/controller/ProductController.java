@@ -1,7 +1,7 @@
 //package com.SmartMart.backend.Application.Controllers;
 //
 //
-//import com.SmartMart.backend.Domain.Model.Product;
+//import com.SmartMart.backend.CustomerOrder.Model.Product;
 //import com.SmartMart.backend.External.Repositories.ProductRepository;
 //import lombok.AllArgsConstructor;
 //import lombok.Data;
@@ -62,9 +62,9 @@
 //
 //
 //
-package com.SmartMart.backend.Application.Controllers;
+package com.SmartMart.backend.CustomerOrder.controller;
 
-import com.SmartMart.backend.Domain.Model.Product;
+import com.SmartMart.backend.CustomerOrder.Model.Product;
 import com.SmartMart.backend.External.Repositories.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;

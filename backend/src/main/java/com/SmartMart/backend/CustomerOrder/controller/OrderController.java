@@ -1,7 +1,7 @@
-package com.SmartMart.backend.Application.Controllers;
+package com.SmartMart.backend.CustomerOrder.controller;
 
-import com.SmartMart.backend.Domain.Model.Order;
-import com.SmartMart.backend.Domain.Service.OrderService;
+import com.SmartMart.backend.CustomerOrder.Model.Order;
+import com.SmartMart.backend.CustomerOrder.service.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

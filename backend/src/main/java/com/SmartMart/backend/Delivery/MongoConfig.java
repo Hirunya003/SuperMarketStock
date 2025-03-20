@@ -1,4 +1,4 @@
-package com.SmartMart.backend.Delivery.controller;
+package com.SmartMart.backend.Delivery;
 
 
 import com.mongodb.client.MongoClient;

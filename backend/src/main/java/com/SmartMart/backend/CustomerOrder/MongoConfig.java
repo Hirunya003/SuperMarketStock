@@ -1,4 +1,4 @@
-package com.SmartMart.backend.CustomerOrder.controller;
+package com.SmartMart.backend.CustomerOrder;
 
 
 
