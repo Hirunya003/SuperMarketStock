@@ -1,4 +1,4 @@
-package com.SmartMart.backend.Inventory.controller;
+package com.SmartMart.backend.Delivery.controller;
 
 
 import com.mongodb.client.MongoClient;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Configuration
-public class MongoConfig {
+public class DeliveryMongoConfig {
 
     @Bean
     public MongoClient mongoClient() {

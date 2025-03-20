@@ -1,5 +1,4 @@
-package com.SmartMart.backend.CustomerOrder.controller;
-
+package com.SmartMart.backend.Payment.controller;
 
 
 import com.mongodb.client.MongoClient;
@@ -9,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Configuration
-public class MongoConfig {
+public class PaymentMongoConfig {
 
     @Bean
     public MongoClient mongoClient() {
