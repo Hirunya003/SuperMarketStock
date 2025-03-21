@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/inventory")
 public class InventoryController {
-    @Autowired
-    private InventoryService inventoryService;
+    public final InventoryService inventoryService;
+
+    public InventoryController(InventoryService inventoryService) {
+        this.inventoryService = inventoryService;
+    }
 
     @PostMapping
     public InventoryItem addItem(@RequestBody InventoryItem item) {

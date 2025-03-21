@@ -4,6 +4,8 @@ import com.SmartMart.backend.Supplier.model.Supplier;
 import com.SmartMart.backend.Supplier.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import lombok.Data;
+import java.util.List;
 
 import java.util.List;
 
@@ -23,3 +25,5 @@ public class SupplierController {
         return supplierService.getAllSuppliers();
     }
 }
+
+
