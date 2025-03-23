@@ -3,13 +3,15 @@ package com.store.inventory_management.config;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.store.inventory_management.model.User;
-import com.store.inventory_management.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
@@ -21,10 +23,11 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     @Value("${spring.data.mongodb.database}")
     private String databaseName;
 
-    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public MongoConfig(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    @Autowired
+    public MongoConfig(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -43,29 +46,27 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // For encrypting passwords
-    }
+    public CommandLineRunner seedInitialUsers(MongoTemplate mongoTemplate) {
+        return args -> {
+            // Check if manager exists, if not, create it
+            Query managerQuery = new Query(Criteria.where("email").is("manager@gmail.com"));
+            if (mongoTemplate.findOne(managerQuery, User.class) == null) {
+                User manager = new User();
+                manager.setEmail("manager@gmail.com");
+                manager.setPassword(passwordEncoder.encode("manager123"));
+                manager.setRole("ROLE_MANAGER");
+                mongoTemplate.save(manager, "users");
+            }
 
-    // Seed initial data (manager and admin) on application startup
-    @Bean
-    public void seedInitialUsers() {
-        // Check if manager exists, if not, create it
-        if (userRepository.findByEmail("manager@gmail.com").isEmpty()) {
-            User manager = new User();
-            manager.setEmail("manager@gmail.com");
-            manager.setPassword(passwordEncoder().encode("manager123")); // Encrypt password
-            manager.setRole("MANAGER");
-            userRepository.save(manager);
-        }
-
-        // Check if admin exists, if not, create it
-        if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {=
-            User admin = new User();
-            admin.setEmail("admin@gmail.com");
-            admin.setPassword(passwordEncoder().encode("admin123")); // Encrypt password
-            admin.setRole("ADMIN");
-            userRepository.save(admin);
-        }
+            // Check if admin exists, if not, create it
+            Query adminQuery = new Query(Criteria.where("email").is("admin@gmail.com"));
+            if (mongoTemplate.findOne(adminQuery, User.class) == null) {
+                User admin = new User();
+                admin.setEmail("admin@gmail.com");
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setRole("ROLE_ADMIN");
+                mongoTemplate.save(admin, "users");
+            }
+        };
     }
 }
