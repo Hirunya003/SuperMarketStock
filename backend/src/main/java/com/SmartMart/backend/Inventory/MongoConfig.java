@@ -1,4 +1,4 @@
-package com.SmartMart.backend.Inventory.controller;
+package com.SmartMart.backend.Inventory;
 
 
 import com.mongodb.client.MongoClient;
