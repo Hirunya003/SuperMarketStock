@@ -3,13 +3,13 @@ package com.store.inventory_management.dto;
 import lombok.Data;
 
 @Data
-public class TransactionDTO {
+public class InventoryDTO {
 
     private String id;
     private String productCode;
     private String productName;
+    private String category;
     private Integer quantity;
-    private Double profit;
-    private String status;
-    private String createdBy;
+    private Double sellingPrice;
+    private Double costPrice;
 }
