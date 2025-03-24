@@ -4,6 +4,7 @@ import com.store.inventory_management.dto.InventoryDTO;
 import com.store.inventory_management.model.Inventory;
 import com.store.inventory_management.repository.InventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,22 +17,57 @@ public class InventoryService {
     private InventoryRepository inventoryRepository;
 
     public InventoryDTO addInventory(InventoryDTO inventoryDTO) {
-        if (inventoryRepository.existsByProductCode(inventoryDTO.getProductCode())) {
-            throw new IllegalArgumentException("Product code already exists");
+        // Check if manager is logged in
+        String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
+        if (!currentUserRole.contains("ROLE_MANAGER")) {
+            throw new IllegalStateException("Only managers can add inventory");
         }
+
+        // Enforce quantity limits (min 0, max 100)
+        int quantity = inventoryDTO.getQuantity();
+        if (quantity < 0 || quantity > 100) {
+            throw new IllegalArgumentException("Quantity must be between 0 and 100");
+        }
+
+        // Check for duplicate product code and increase quantity if exists
+        Inventory existing = inventoryRepository.findByProductCode(inventoryDTO.getProductCode());
+        if (existing != null) {
+            int newQuantity = existing.getQuantity() + quantity;
+            if (newQuantity > 100) {
+                throw new IllegalArgumentException("Total quantity cannot exceed 100");
+            }
+            existing.setQuantity(newQuantity);
+            Inventory updatedInventory = inventoryRepository.save(existing);
+            return mapToDTO(updatedInventory);
+        }
+
+        // Add new inventory item if no duplicate
         Inventory inventory = mapToEntity(inventoryDTO);
         Inventory savedInventory = inventoryRepository.save(inventory);
         return mapToDTO(savedInventory);
     }
 
     public InventoryDTO updateInventory(String productCode, InventoryDTO inventoryDTO) {
+        // Check if manager is logged in
+        String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
+        if (!currentUserRole.contains("ROLE_MANAGER")) {
+            throw new IllegalStateException("Only managers can update inventory");
+        }
+
         Inventory existing = inventoryRepository.findByProductCode(productCode);
         if (existing == null) {
             throw new IllegalArgumentException("Inventory item not found");
         }
+
+        // Enforce quantity limits (min 0, max 100)
+        int quantity = inventoryDTO.getQuantity();
+        if (quantity < 0 || quantity > 100) {
+            throw new IllegalArgumentException("Quantity must be between 0 and 100");
+        }
+
         existing.setProductName(inventoryDTO.getProductName());
         existing.setCategory(inventoryDTO.getCategory());
-        existing.setQuantity(inventoryDTO.getQuantity());
+        existing.setQuantity(quantity);
         existing.setSellingPrice(inventoryDTO.getSellingPrice());
         existing.setCostPrice(inventoryDTO.getCostPrice());
         Inventory updatedInventory = inventoryRepository.save(existing);
@@ -39,6 +75,12 @@ public class InventoryService {
     }
 
     public void deleteInventory(String productCode) {
+        // Check if manager is logged in
+        String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
+        if (!currentUserRole.contains("ROLE_MANAGER")) {
+            throw new IllegalStateException("Only managers can delete inventory");
+        }
+
         Inventory existing = inventoryRepository.findByProductCode(productCode);
         if (existing == null) {
             throw new IllegalArgumentException("Inventory item not found");
@@ -47,6 +89,7 @@ public class InventoryService {
     }
 
     public List<InventoryDTO> getAllInventory() {
+        // Display all inventory items with their current quantity levels
         return inventoryRepository.findAll()
                 .stream()
                 .map(this::mapToDTO)
@@ -67,8 +110,8 @@ public class InventoryService {
             throw new IllegalArgumentException("Inventory item not found");
         }
         int newQuantity = inventory.getQuantity() + quantityChange;
-        if (newQuantity < 0) {
-            throw new IllegalArgumentException("Insufficient inventory quantity");
+        if (newQuantity < 0 || newQuantity > 100) {
+            throw new IllegalArgumentException("Quantity must be between 0 and 100");
         }
         inventory.setQuantity(newQuantity);
         inventoryRepository.save(inventory);

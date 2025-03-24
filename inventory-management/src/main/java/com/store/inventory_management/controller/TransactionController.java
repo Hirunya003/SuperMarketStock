@@ -26,11 +26,15 @@ public class TransactionController {
         return new ResponseEntity<>(transaction, HttpStatus.CREATED);
     }
 
-    @PutMapping("/update/{transactionId}")
-    public ResponseEntity<TransactionDTO> updateTransactionStatus(
-            @PathVariable String transactionId,
-            @RequestParam String status) {
-        TransactionDTO updatedTransaction = transactionService.updateTransactionStatus(transactionId, status);
+    @PutMapping("/accept/{transactionId}")
+    public ResponseEntity<TransactionDTO> acceptTransaction(@PathVariable String transactionId) {
+        TransactionDTO updatedTransaction = transactionService.acceptTransaction(transactionId);
+        return ResponseEntity.ok(updatedTransaction);
+    }
+
+    @PutMapping("/reject/{transactionId}")
+    public ResponseEntity<TransactionDTO> rejectTransaction(@PathVariable String transactionId) {
+        TransactionDTO updatedTransaction = transactionService.rejectTransaction(transactionId);
         return ResponseEntity.ok(updatedTransaction);
     }
 

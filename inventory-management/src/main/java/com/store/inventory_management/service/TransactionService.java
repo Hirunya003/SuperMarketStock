@@ -1,10 +1,11 @@
 package com.store.inventory_management.service;
 
 import com.store.inventory_management.dto.TransactionDTO;
-import com.store.inventory_management.model.Inventory;
-import com.store.inventory_management.model.Transaction;
-import com.store.inventory_management.repository.TransactionRepository;
+import com.store.inventory_management.model.Inventory; // Added for clarity
+import com.store.inventory_management.model.Transaction; // Line 5: Import Transaction
+import com.store.inventory_management.repository.TransactionRepository; // Line 6: Import TransactionRepository
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,19 +15,27 @@ import java.util.stream.Collectors;
 public class TransactionService {
 
     @Autowired
-    private TransactionRepository transactionRepository;
+    private TransactionRepository transactionRepository; // Line 16: Declaration
 
     @Autowired
-    private InventoryService inventoryService;
+    private InventoryService inventoryService; // Line 18: Declaration
 
     public TransactionDTO createTransaction(String productCode, int quantity, String managerEmail) {
+        // Check if manager is logged in
+        String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
+        if (!currentUserRole.contains("ROLE_MANAGER")) {
+            throw new IllegalStateException("Only managers can create transactions");
+        }
+
         Inventory inventory = inventoryService.getInventoryByProductCode(productCode);
         if (inventory.getQuantity() < quantity) {
             throw new IllegalArgumentException("Insufficient inventory quantity");
         }
 
+        // Calculate profit: (sellingPrice - costPrice) * quantity
         double profit = (inventory.getSellingPrice() - inventory.getCostPrice()) * quantity;
-        Transaction transaction = new Transaction();
+
+        Transaction transaction = new Transaction(); // Line 33: First use of Transaction
         transaction.setProductCode(productCode);
         transaction.setProductName(inventory.getProductName());
         transaction.setQuantity(quantity);
@@ -34,32 +43,54 @@ public class TransactionService {
         transaction.setStatus("pending");
         transaction.setCreatedBy(managerEmail);
 
-        Transaction savedTransaction = transactionRepository.save(transaction);
+        Transaction savedTransaction = transactionRepository.save(transaction); // Line 40: Use of TransactionRepository and Transaction
         return mapToDTO(savedTransaction);
     }
 
-    public TransactionDTO updateTransactionStatus(String transactionId, String newStatus) {
+    public TransactionDTO acceptTransaction(String transactionId) {
+        String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
+        if (!currentUserRole.contains("ROLE_CASHIER") && !currentUserRole.contains("ROLE_MANAGER")) {
+            throw new IllegalStateException("Only cashiers or managers can accept transactions");
+        }
+
         Transaction transaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
 
         if (!"pending".equals(transaction.getStatus())) {
-            throw new IllegalArgumentException("Only pending transactions can be updated");
+            throw new IllegalArgumentException("Only pending transactions can be accepted");
         }
 
-        if (!"accepted".equals(newStatus) && !"rejected".equals(newStatus)) {
-            throw new IllegalArgumentException("Status must be 'accepted' or 'rejected'");
+        inventoryService.updateInventoryQuantity(transaction.getProductCode(), -transaction.getQuantity());
+
+        transaction.setStatus("accepted");
+        Transaction updatedTransaction = transactionRepository.save(transaction);
+        return mapToDTO(updatedTransaction);
+    }
+
+    public TransactionDTO rejectTransaction(String transactionId) {
+        String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
+        if (!currentUserRole.contains("ROLE_CASHIER") && !currentUserRole.contains("ROLE_MANAGER")) {
+            throw new IllegalStateException("Only cashiers or managers can reject transactions");
         }
 
-        if ("accepted".equals(newStatus)) {
-            inventoryService.updateInventoryQuantity(transaction.getProductCode(), -transaction.getQuantity());
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
+
+        if (!"pending".equals(transaction.getStatus())) {
+            throw new IllegalArgumentException("Only pending transactions can be rejected");
         }
 
-        transaction.setStatus(newStatus);
+        transaction.setStatus("rejected");
         Transaction updatedTransaction = transactionRepository.save(transaction);
         return mapToDTO(updatedTransaction);
     }
 
     public void deleteTransaction(String transactionId) {
+        String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
+        if (!currentUserRole.contains("ROLE_CASHIER") && !currentUserRole.contains("ROLE_MANAGER")) {
+            throw new IllegalStateException("Only cashiers or managers can delete transactions");
+        }
+
         Transaction transaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
 
